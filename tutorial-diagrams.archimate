@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archimate:model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:archimate="http://www.archimatetool.com/archimate" name="MFT-DAF-Tutorial" id="id-model-mft-daf" version="5.0.0">
+  <folder name="Strategy" id="id-fldr-strtgy" type="strategy"/>
+  <folder name="Business" id="id-fldr-biz" type="business">
+    <element xsi:type="archimate:BusinessActor" name="Third Party Client" id="id-biz-actor-3p-client"/>
+    <element xsi:type="archimate:BusinessObject" name="zip file collection" id="id-biz-obj-zipfile"/>
+  </folder>
+  <folder name="Application" id="id-fldr-app" type="application">
+    <element xsi:type="archimate:ApplicationService" name="MFT SaaS" id="id-app-svc-mft-saas"/>
+    <element xsi:type="archimate:ApplicationService" name="Integration SaaS" id="id-app-svc-intg-saas"/>
+    <element xsi:type="archimate:DataObject" name="File Uploaded Notification" id="id-app-obj-file-notif"/>
+    <element xsi:type="archimate:ApplicationService" name="Edge Processor" id="id-app-svc-edge-proc"/>
+    <element xsi:type="archimate:ApplicationService" name="On-Prem Database" id="id-app-svc-onprem-db"/>
+  </folder>
+  <folder name="Technology &amp; Physical" id="id-fldr-tech" type="technology"/>
+  <folder name="Motivation" id="id-fldr-motvn" type="motivation"/>
+  <folder name="Implementation &amp; Migration" id="id-fldr-impl-mig" type="implementation_migration"/>
+  <folder name="Other" id="id-fldr-other" type="other">
+    <element xsi:type="archimate:Grouping" name="IBM SaaS" id="id-other-grp-ibm-saas"/>
+    <element xsi:type="archimate:Location" name="AWS / Azure Region" id="id-other-loc-cloud-rgn"/>
+    <element xsi:type="archimate:Grouping" name="Private Resources (e.g. On-premise LAN)" id="id-other-grp-private-res"/>
+    <element xsi:type="archimate:Location" name="Private Location" id="id-other-loc-private"/>
+  </folder>
+  <folder name="Relations" id="id-fldr-rels" type="relations">
+    <element xsi:type="archimate:FlowRelationship" id="id-rel-flow-3pclient-mft" source="id-biz-actor-3p-client" target="id-app-svc-mft-saas"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-rel-assoc-zip-flow1" source="id-biz-obj-zipfile" target="id-rel-flow-3pclient-mft"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-rel-flow-mft-intg" source="id-app-svc-mft-saas" target="id-app-svc-intg-saas"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-rel-assoc-notif-flow2" source="id-app-obj-file-notif" target="id-rel-flow-mft-intg"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-rel-flow-intg-edge" source="id-app-svc-intg-saas" target="id-app-svc-edge-proc"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-rel-assoc-notif-flow3" source="id-app-obj-file-notif" target="id-rel-flow-intg-edge"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-rel-srv-mft-3pclient" source="id-app-svc-mft-saas" target="id-biz-actor-3p-client"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-rel-srv-intg-mft" source="id-app-svc-intg-saas" target="id-app-svc-mft-saas"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-rel-srv-intg-edge" source="id-app-svc-intg-saas" target="id-app-svc-edge-proc"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-rel-srv-db-edge" source="id-app-svc-onprem-db" target="id-app-svc-edge-proc"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-rel-flow-edge-db" source="id-app-svc-edge-proc" target="id-app-svc-onprem-db"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-rel-flow-mft-edge" source="id-app-svc-mft-saas" target="id-app-svc-edge-proc"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-rel-assoc-zip-flow4" source="id-biz-obj-zipfile" target="id-rel-flow-mft-edge"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-rel-srv-mft-edge" source="id-app-svc-mft-saas" target="id-app-svc-edge-proc"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-rel-asgn-cloudrgn-ibm" source="id-other-loc-cloud-rgn" target="id-other-grp-ibm-saas"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-rel-asgn-privloc-res" source="id-other-loc-private" target="id-other-grp-private-res"/>
+  </folder>
+  <folder name="Views" id="id-fldr-views" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Data Flow" id="id-view-default">
+      <child xsi:type="archimate:DiagramObject" id="id-dv-df-ibm-saas" targetConnections="id-dv-df-cloudrgn-to-ibm" textAlignment="1" archimateElement="id-other-grp-ibm-saas">
+        <bounds x="168" y="54" width="302" height="199"/>
+        <child xsi:type="archimate:DiagramObject" id="id-dv-df-mft-saas" targetConnections="id-dv-df-3pclient-to-mft id-dv-df-intg-to-mft" fillColor="#feffff" textPosition="1" archimateElement="id-app-svc-mft-saas">
+          <bounds x="13" y="36" width="120" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-mft-to-intg" targetConnections="id-dv-df-notif-to-mftconn" source="id-dv-df-mft-saas" target="id-dv-df-intg-saas" archimateRelationship="id-rel-flow-mft-intg">
+            <bendpoint startX="96" startY="21" endX="-108" endY="21"/>
+          </sourceConnection>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-mft-to-3pclient" source="id-dv-df-mft-saas" target="id-dv-df-3p-client" archimateRelationship="id-rel-srv-mft-3pclient"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-mft-to-edge-fl" targetConnections="id-dv-df-zip-to-edgeconn" source="id-dv-df-mft-saas" target="id-dv-df-edge-proc" archimateRelationship="id-rel-flow-mft-edge">
+            <bendpoint startX="12" startY="117" endX="-384" endY="117"/>
+            <bendpoint startX="384" startY="117" endX="-12" endY="117"/>
+          </sourceConnection>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-mft-to-edge-sv" source="id-dv-df-mft-saas" target="id-dv-df-edge-proc" archimateRelationship="id-rel-srv-mft-edge">
+            <bendpoint startX="36" startY="105" endX="-360" endY="105"/>
+            <bendpoint startX="360" startY="105" endX="-36" endY="105"/>
+          </sourceConnection>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-dv-df-file-notif" fillColor="#feffff" textPosition="1" archimateElement="id-app-obj-file-notif">
+          <bounds x="169" y="108" width="120" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-notif-to-mftconn" source="id-dv-df-file-notif" target="id-dv-df-mft-to-intg" archimateRelationship="id-rel-assoc-notif-flow2"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-notif-to-intgconn" source="id-dv-df-file-notif" target="id-dv-df-intg-to-edge" archimateRelationship="id-rel-assoc-notif-flow3"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-dv-df-intg-saas" targetConnections="id-dv-df-mft-to-intg" fillColor="#feffff" textPosition="1" archimateElement="id-app-svc-intg-saas">
+          <bounds x="169" y="36" width="120" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-intg-to-edge" targetConnections="id-dv-df-notif-to-intgconn" source="id-dv-df-intg-saas" target="id-dv-df-edge-proc" archimateRelationship="id-rel-flow-intg-edge">
+            <bendpoint startX="96" startY="21" endX="-96" endY="21"/>
+          </sourceConnection>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-intg-to-mft" source="id-dv-df-intg-saas" target="id-dv-df-mft-saas" archimateRelationship="id-rel-srv-intg-mft"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-intg-to-edge-sv" source="id-dv-df-intg-saas" target="id-dv-df-edge-proc" archimateRelationship="id-rel-srv-intg-edge"/>
+        </child>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-dv-df-3p-client" targetConnections="id-dv-df-mft-to-3pclient" fillColor="#feffff" textPosition="1" archimateElement="id-biz-actor-3p-client">
+        <bounds x="12" y="96" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-3pclient-to-mft" targetConnections="id-dv-df-zip-to-flowconn" source="id-dv-df-3p-client" target="id-dv-df-mft-saas" archimateRelationship="id-rel-flow-3pclient-mft">
+          <bendpoint startX="95" startY="21" endX="-96" endY="21"/>
+        </sourceConnection>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-dv-df-cloud-rgn" archimateElement="id-other-loc-cloud-rgn">
+        <bounds x="192" y="12" width="241" height="25"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-cloudrgn-to-ibm" source="id-dv-df-cloud-rgn" target="id-dv-df-ibm-saas" archimateRelationship="id-rel-asgn-cloudrgn-ibm"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-dv-df-zipfile" fillColor="#feffff" textPosition="1" archimateElement="id-biz-obj-zipfile">
+        <bounds x="36" y="192" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-zip-to-flowconn" source="id-dv-df-zipfile" target="id-dv-df-3pclient-to-mft" archimateRelationship="id-rel-assoc-zip-flow1"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-zip-to-edgeconn" source="id-dv-df-zipfile" target="id-dv-df-mft-to-edge-fl" archimateRelationship="id-rel-assoc-zip-flow4">
+          <bendpoint startX="24" startY="45" endX="-338" endY="73"/>
+          <bendpoint startX="312" startY="45" endX="-50" endY="73"/>
+        </sourceConnection>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-dv-df-private-res" targetConnections="id-dv-df-privloc-to-res" textAlignment="1" archimateElement="id-other-grp-private-res">
+        <bounds x="492" y="54" width="301" height="97"/>
+        <child xsi:type="archimate:DiagramObject" id="id-dv-df-onprem-db" targetConnections="id-dv-df-edge-to-db" fillColor="#feffff" textPosition="1" archimateElement="id-app-svc-onprem-db">
+          <bounds x="168" y="36" width="120" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-db-to-edge" source="id-dv-df-onprem-db" target="id-dv-df-edge-proc" archimateRelationship="id-rel-srv-db-edge"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-dv-df-edge-proc" targetConnections="id-dv-df-intg-to-edge id-dv-df-intg-to-edge-sv id-dv-df-db-to-edge id-dv-df-mft-to-edge-fl id-dv-df-mft-to-edge-sv" fillColor="#feffff" textPosition="1" archimateElement="id-app-svc-edge-proc">
+          <bounds x="24" y="36" width="120" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-edge-to-db" source="id-dv-df-edge-proc" target="id-dv-df-onprem-db" archimateRelationship="id-rel-flow-edge-db">
+            <bendpoint startX="108" startY="21" endX="-108" endY="21"/>
+          </sourceConnection>
+        </child>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-dv-df-private-loc" archimateElement="id-other-loc-private">
+        <bounds x="547" y="11" width="192" height="27"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-dv-df-privloc-to-res" source="id-dv-df-private-loc" target="id-dv-df-private-res" archimateRelationship="id-rel-asgn-privloc-res"/>
+      </child>
+    </element>
+  </folder>
+</archimate:model>

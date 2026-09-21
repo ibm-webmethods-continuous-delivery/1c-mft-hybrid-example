@@ -1,0 +1,25 @@
+services:
+  1c-mft-example:
+    image: 1c-mft-example
+    build:
+      context: ./build
+      args:
+        - __git_repo_home=${GIT_REPO_HOME}
+        - __gid=${GID}
+        - __uid=${UID}
+        - __uname=${UNAME}
+    container_name: 1c-mft-example
+    hostname: 1c-mft-example
+    read_only: true
+    entrypoint: sleep infinity
+    volumes:
+      - ../../:${GIT_REPO_HOME}
+      - mft-example-user-home:/home/${UNAME}
+      - mft-example-tmp:/tmp
+
+volumes:
+  mft-example-tmp:
+    name: 1c-mft-example-tmp
+  # decision: this sandbox has ephemeral user homes that are destroyed when docker compose down -v is issued
+  mft-example-user-home:
+    name: 1c-mft-example-user-home
