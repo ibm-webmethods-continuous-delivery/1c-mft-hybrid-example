@@ -73,6 +73,9 @@ For simplicity, from now on the code snippets are provided for MacOS, Linux or P
 
 Now copy EXAMPLE.env into .env and change the values in .env according to your needs. Mind that the user and group ids should be the same as the user executing the docker commands.
 
+> **Note for Rootless Docker on Linux:**
+> When running with rootless Docker on Linux, the container non-root user needs additional group permissions to access bind mounts properly. Ensure you set `CONSIDER_ADDITIONAL_GROUP=true` and `ADDITIONAL_GROUP_ID=0` (root group) in your `.env` file, and grant write permissions for the group on the host folder if necessary.
+
 Run the following commands:
 
 
