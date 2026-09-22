@@ -1,5 +1,15 @@
 # `step02`: Ensure all prerequisites and build edge images with debugging and jdbc adapter
 
+## Move Repository to `step02`
+
+If you are following the tutorial sequentially using the sandbox container from [`step01`](step01.md), switch the repository to the `step02` tag before proceeding.
+
+Inside the `1c-mft-example` sandbox shell (or using `lazygit` under the **Tags** tab):
+
+```sh
+git checkout step02
+```
+
 ## SaaS Capabilities
 
 To execute this tutorial you must have access to an IBM webMethods SaaS tenant having the MFT and Integration capabilities enabled. You should see at least the following entries in the hamburger menu of the tenant.
