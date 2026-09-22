@@ -2,9 +2,9 @@
 
 ## Move Repository to `step02`
 
-If you are following the tutorial sequentially using the sandbox container from [`step01`](step01.md), switch the repository to the `step02` tag before proceeding.
+If you are following the tutorial sequentially using the sandbox container from [`step01`](step01.md), switch the repository to the `step02` branch before proceeding.
 
-Inside the `1c-mft-example` sandbox shell (or using `lazygit` under the **Tags** tab):
+Inside the `1c-mft-example` sandbox shell (or using `lazygit` under the **Local Branches** tab):
 
 ```sh
 git checkout step02
@@ -68,7 +68,7 @@ The current step commit contains a subfolder called `other-repos`. Open a new co
 
 ```sh
 # if the sandbox is not up, start it:
-# cd <tutorial-home>/1c-mft-hybrid-example/.sbx/1c-mft-example
+# cd ${TUTORIAL_HOME}/1c-mft-hybrid-example/.sbx/1c-mft-example
 
 docker compose up -d
 
@@ -117,15 +117,25 @@ cd /repo/1c-mft-hybrid-example/other-repos/7u-container-images/images/u/edge/jdb
 cp set-env-example.sh set-env.sh
 ```
 
-Now edit the file `set-env.sh` and write inside the WPM token we prepared above. You may use neovim inside the sandbox.
+```bat
+@REM Windows CMD: run from the same folder on the host
+cd %TUTORIAL_HOME%\1c-mft-hybrid-example\other-repos\7u-container-images\images\u\edge\jdbc
+copy set-env-example.bat set-env.bat
+```
+
+Now edit the file and write the WPM token we prepared above. Inside the sandbox you may use neovim:
 
 ```sh
 nvim set-env.sh
 ```
 
+On Windows host, open `set-env.bat` in any editor and replace `put.your.token.here` with your token.
+
 Take a moment to inspect the files in the folder. Observe how Dockerfile is built and how the wpm token is protected not to be accidentally exposed in the history of commands. Also note the staging approach, pointing to an intention to have packaging tools like WPM used only in intermediary stages.
 
-After saving the `set-env.sh` file, we open a new shell on the host, where we can execute docker commands. Note that for security purposes, we will not use "docker in docker" for the sandbox coming with the tutorial, but we will use another special build and scan sandbox that comes with the images builder. For this purpose, on the above opened shell, navigate to the folder `<tutorial-home>/1c-mft-hybrid-example/other-repos/7u-container-images/.sbx/7u-ci-builder/`. There, execute the following command.
+After saving the `set-env.sh` file, we open a new shell on the host, where we can execute docker commands. Note that for security purposes, we will not use "docker in docker" for the sandbox coming with the tutorial, but we will use another special build and scan sandbox that comes with the images builder. For this purpose, on the above opened shell, navigate to the folder `${TUTORIAL_HOME}/1c-mft-hybrid-example/other-repos/7u-container-images/.sbx/7u-ci-builder/`. There, execute the following command.
+
+> **⚠️ The following commands run on your host machine, not inside the sandbox container.**
 
 Note: at the moment of this tutorial preparation, the WPM tool requires ssh access to github to successfully complete the package installation.
 
@@ -133,8 +143,9 @@ Note: at the moment of this tutorial preparation, the WPM tool requires ssh acce
 # Linux / macOS
 # if not yet prepared, prepare the .env file
 cp EXAMPLE.env .env
-# Edit the .env file to match the user id and group id you are currently using...
-# On Mac or Linux systems you can safely comment them out as they are read dynamically from the user session, however if you want to overwrite the values, the .env file takes precedence.
+# The .env file contains BUILD_USER_ID and BUILD_GROUP_ID (default 1001).
+# On Mac or Linux you can safely comment them out — they are read dynamically from the user
+# session. Override them if your host UID/GID differs (check with: id -u && id -g).
 ./build.sh --scan u/edge/jdbc
 ```
 
@@ -142,7 +153,8 @@ cp EXAMPLE.env .env
 @REM Windows
 @REM if not yet prepared, prepare the .env file
 copy EXAMPLE.env .env
-@REM Edit the .env file to match the user id and group id if needed.
+@REM The .env file contains BUILD_USER_ID and BUILD_GROUP_ID (default 1001).
+@REM Edit them if your host user/group ids differ.
 .\build.bat --scan u/edge/jdbc
 ```
 
@@ -158,7 +170,7 @@ docker images | grep edge-jdbc
 docker images | findstr edge-jdbc
 ```
 
-Note that the `--scan` option also produces a hadolint scan of the Dockerfile and a trivy scan of the resulting image. Inspect the sub-folder `scan-results` of the 7u-ci-builder sandbox. Files like `<tutorial-home>/1c-mft-hybrid-example/other-repos/7u-container-images/.sbx/7u-ci-builder/scan-results/session_20260922_094630/details/u_edge_jdbc/u_edge_jdbc_trivy_20260922_094630_sbom.json` can be inspected for composition, vulnerabilities and packaged licenses with tools like [Sunshine SBOM tool](https://cyclonedx.github.io/Sunshine/).
+Note that the `--scan` option also produces a hadolint scan of the Dockerfile and a trivy scan of the resulting image. Inspect the sub-folder `scan-results` of the 7u-ci-builder sandbox. Files like `${TUTORIAL_HOME}/1c-mft-hybrid-example/other-repos/7u-container-images/.sbx/7u-ci-builder/scan-results/session_20260922_094630/details/u_edge_jdbc/u_edge_jdbc_trivy_20260922_094630_sbom.json` can be inspected for composition, vulnerabilities and packaged licenses with tools like [Sunshine SBOM tool](https://cyclonedx.github.io/Sunshine/).
 
 ### Advanced Optional Step
 
@@ -169,19 +181,29 @@ The same way we have built the `edge-jdbc` image, we can build a debugging one c
 cd /repo/1c-mft-hybrid-example/other-repos/7u-container-images/images/u/edge/debug-jdbc/
 cp set-env-example.sh set-env.sh
 # set the wpm token in set-env.sh
+nvim set-env.sh
+```
+
+```bat
+@REM Windows CMD: run from the same folder on the host
+cd %TUTORIAL_HOME%\1c-mft-hybrid-example\other-repos\7u-container-images\images\u\edge\debug-jdbc
+copy set-env-example.bat set-env.bat
+@REM Open set-env.bat in any editor and replace put.your.token.here with your token
 ```
 
 ```sh
 # on the host machine / Linux or macOS:
-cd <tutorial-home>/1c-mft-hybrid-example/other-repos/7u-container-images/.sbx/7u-ci-builder
+cd ${TUTORIAL_HOME}/1c-mft-hybrid-example/other-repos/7u-container-images/.sbx/7u-ci-builder
 ./build.sh --scan u/edge/debug-jdbc
 ```
 
 ```bat
-@REM on the host machine / Windows:
-cd <tutorial-home>\1c-mft-hybrid-example\other-repos\7u-container-images\.sbx\7u-ci-builder
+@REM on the host machine / Windows CMD:
+cd %TUTORIAL_HOME%\1c-mft-hybrid-example\other-repos\7u-container-images\.sbx\7u-ci-builder
 .\build.bat --scan u/edge/debug-jdbc
 ```
+
+As with `edge-jdbc`, the `--scan` flag produces hadolint and trivy scan results under the `scan-results` sub-folder of the `7u-ci-builder` sandbox, with a folder structure analogous to the one described above.
 
 ---
 
