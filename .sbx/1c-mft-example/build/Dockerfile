@@ -39,20 +39,20 @@ ARG __mft_user_home=/home/${__uname}
 ARG __git_repo_home=/repo/1c-mft-hybrid-example
 
 RUN if ! getent group "${__gid}" >/dev/null 2>&1; then \
-         addgroup -g "${__gid}" "${__gname}" 2>/dev/null
+         addgroup -g "${__gid}" "${__gname}" 2>/dev/null; \
     fi \
     && group_name=$(getent group "${__gid}" | cut -d: -f1) \
     && if ! getent passwd "${__uid}" >/dev/null 2>&1; then \
          adduser -u "${__uid}" -G "${group_name}" \
-           -D -h "${__mft_user_home}" "${__uname}" 2>/dev/null \
+           -D -h "${__mft_user_home}" "${__uname}" 2>/dev/null; \
        fi \
     && user_name=$(getent passwd "${__uid}" | cut -d: -f1) \
     && if [ "${__consider_additional_group}" = "true" ]; then \
          if ! getent group "${__additional_group_id}" >/dev/null 2>&1; then \
-           addgroup -g "${__additional_group_id}" "group_${__additional_group_id}" 2>/dev/null \
-         fi; \
-         addgroup_name=$(getent group "${__additional_group_id}" | cut -d: -f1); \
-         addgroup "${user_name}" "${addgroup_name}"; \
+           addgroup -g "${__additional_group_id}" "group_${__additional_group_id}" 2>/dev/null; \
+         fi \
+         && addgroup_name=$(getent group "${__additional_group_id}" | cut -d: -f1) \
+         && addgroup "${user_name}" "${addgroup_name}"; \
        fi \
     && mkdir -p \
       "${__mft_user_home}" \
