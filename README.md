@@ -32,3 +32,5 @@ At the moment of its initial planning, that is at `step01`, the tutorial contain
 Working in an agile mode, this plan may change as we go ahead and learn further details.
 
 Screenshots are also to be taken as evolving examples, as the product is constantly evolving and different subscriptions may have different detailed views.
+
+For convenience, some quick commands reference is kept in [this file](docs/QUICK_COMMANDS.md).
