@@ -8,6 +8,8 @@ services:
         - __gid=${GID}
         - __uid=${UID}
         - __uname=${UNAME}
+        - __consider_additional_group=${CONSIDER_ADDITIONAL_GROUP:-false}
+        - __additional_group_id=${ADDITIONAL_GROUP_ID:-0}
     container_name: 1c-mft-example
     hostname: 1c-mft-example
     read_only: true

@@ -26,6 +26,10 @@ ARG __gid=1001
 ARG __gname=mftexample
 ARG __uid=1001
 ARG __uname=mftexample
+# For rootless containers use the root group for RW permissions on the bind mounts
+# on the host add RW permissions for the user group on the entire folder
+ARG __consider_additional_group=false
+ARG __additional_group_id=0
 
 
 # this folder is expected to receive a mount for the user home
@@ -34,19 +38,32 @@ ARG __mft_user_home=/home/${__uname}
 ## expect repo git directory to be a bind mount
 ARG __git_repo_home=/repo/1c-mft-hybrid-example
 
-RUN { getent group ${__gid} >/dev/null 2>&1 \
-        || addgroup -g ${__gid} ${__gname}; } \
-    && { getent passwd ${__uid} >/dev/null 2>&1 \
-        || adduser -u ${__uid} -g ${__gid} -D -h ${__mft_user_home} ${__uname}; } \
+RUN if ! getent group "${__gid}" >/dev/null 2>&1; then \
+         addgroup -g "${__gid}" "${__gname}" 2>/dev/null; \
+    fi \
+    && group_name=$(getent group "${__gid}" | cut -d: -f1) \
+    && if ! getent passwd "${__uid}" >/dev/null 2>&1; then \
+         adduser -u "${__uid}" -G "${group_name}" \
+           -D -h "${__mft_user_home}" "${__uname}" 2>/dev/null; \
+       fi \
+    && user_name=$(getent passwd "${__uid}" | cut -d: -f1) \
+    && if [ "${__consider_additional_group}" = "true" ]; then \
+         if ! getent group "${__additional_group_id}" >/dev/null 2>&1; then \
+           addgroup -g "${__additional_group_id}" "group_${__additional_group_id}" 2>/dev/null; \
+         fi \
+         && addgroup_name=$(getent group "${__additional_group_id}" | cut -d: -f1) \
+         && addgroup "${user_name}" "${addgroup_name}"; \
+       fi \
     && mkdir -p \
       "${__mft_user_home}" \
       "${__git_repo_home}" \
     && rm -rf /tmp/* \
-    && chown ${__uid}:${__gid} \
+    && chown -R "${__uid}:${__gid}" \
         "${__mft_user_home}" \
         "${__git_repo_home}" \
         /tmp
-USER ${__uname}
+
+USER ${__uid}
 
 RUN git config --global --add safe.directory "${__git_repo_home}"
 
