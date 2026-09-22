@@ -75,6 +75,14 @@ Now copy EXAMPLE.env into .env and change the values in .env according to your n
 
 > **Note for Rootless Docker on Linux:**
 > When running with rootless Docker on Linux, the container non-root user needs additional group permissions to access bind mounts properly. Ensure you set `CONSIDER_ADDITIONAL_GROUP=true` and `ADDITIONAL_GROUP_ID=0` (root group) in your `.env` file, and grant write permissions for the group on the host folder if necessary.
+> This will ensure the inner user may read and write existing files, but the newly created ones will have ownership of the user in the translated namespace. If needed, reset ownership of those files. You must be root inside the container to do this:
+>
+> ```sh
+> docker exec -it -u root 1c-mft-example sh
+> ```
+> 
+> then `cd ...` and `chown root:root ...`
+> in the host file system the files will become owned by the non root user that launched the container.
 
 Run the following commands:
 
