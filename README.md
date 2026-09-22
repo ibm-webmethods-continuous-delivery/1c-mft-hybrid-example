@@ -20,7 +20,7 @@ At the moment of its initial planning, that is at `step01`, the tutorial contain
 
 - [`step01`](docs/step01.md): Ensure basic prerequisites and familiarize with the `lazygit` sandbox
 - [`step02`](docs/step02.md): Ensure all prerequisites and build edge images with debugging and jdbc adapter
-- `step03`: Create MFT SaaS user, virtual folder and reception rule. Test using web client
+- [`step03`](docs/step03.md): Create MFT SaaS user, virtual folder and reception rule. Test using web client
 - `step04`: Create the test harness automation to send a zip file fixture and enable our TDD approach
 - `step05`: Extend MFT processing of the file to produce notifications towards IBM Integration SaaS
 - `step06`: Extend IBM Integration to propagate the notification towards and edge instance
