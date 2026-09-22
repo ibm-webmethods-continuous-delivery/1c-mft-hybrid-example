@@ -38,34 +38,32 @@ ARG __mft_user_home=/home/${__uname}
 ## expect repo git directory to be a bind mount
 ARG __git_repo_home=/repo/1c-mft-hybrid-example
 
-RUN group_name="${__gname}" \
-    && if ! getent group "${__gid}" >/dev/null 2>&1; then \
-         addgroup -g "${__gid}" "${__gname}" 2>/dev/null || addgroup "${__gname}"; \
-       else \
-         group_name=$(getent group "${__gid}" | cut -d: -f1); \
-       fi \
+RUN if ! getent group "${__gid}" >/dev/null 2>&1; then \
+         addgroup -g "${__gid}" "${__gname}" 2>/dev/null
+    fi \
+    && group_name=$(getent group "${__gid}" | cut -d: -f1) \
     && if ! getent passwd "${__uid}" >/dev/null 2>&1; then \
-         adduser -u "${__uid}" -G "${group_name}" -D -h "${__mft_user_home}" "${__uname}" 2>/dev/null \
-         || adduser -G "${group_name}" -D -h "${__mft_user_home}" "${__uname}"; \
+         adduser -u "${__uid}" -G "${group_name}" \
+           -D -h "${__mft_user_home}" "${__uname}" 2>/dev/null \
        fi \
+    && user_name=$(getent passwd "${__uid}" | cut -d: -f1) \
     && if [ "${__consider_additional_group}" = "true" ]; then \
          if ! getent group "${__additional_group_id}" >/dev/null 2>&1; then \
            addgroup -g "${__additional_group_id}" "group_${__additional_group_id}" 2>/dev/null \
-           || addgroup "group_${__additional_group_id}"; \
          fi; \
          addgroup_name=$(getent group "${__additional_group_id}" | cut -d: -f1); \
-         addgroup "${__uname}" "${addgroup_name}"; \
+         addgroup "${user_name}" "${addgroup_name}"; \
        fi \
     && mkdir -p \
       "${__mft_user_home}" \
       "${__git_repo_home}" \
     && rm -rf /tmp/* \
-    && chown -R "${__uname}:${group_name}" \
+    && chown -R "${__uid}:${__gid}" \
         "${__mft_user_home}" \
         "${__git_repo_home}" \
         /tmp
 
-USER ${__uname}
+USER ${__uid}
 
 RUN git config --global --add safe.directory "${__git_repo_home}"
 
