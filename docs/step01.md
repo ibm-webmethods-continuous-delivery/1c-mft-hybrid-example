@@ -2,7 +2,7 @@
 
 To execute this tutorial step, you need a box having git, docker-compose and access to internet allowing for docker build command to work as needed.
 
-In this box, create a tutorial folder, for example `~/mft-tutorial` on Mac / Linux or `%USERPROFILE%\mft-tutorial` or `${env:USERPROFILE}/mft-tutorial` on Windows. We will refer to this folder as `${TUTORIAL_HOME}` or `%TUTORIAL_HOME%` or `${env:TUTORIAL_HOME}` in the following steps according to the user environment:
+In this box, create a tutorial folder, for example `~/mft-tutorial` on Mac / Linux or `%USERPROFILE%\mft-tutorial` or `${env:USERPROFILE}/mft-tutorial` on Windows. We will refer to this folder as `${TUTORIAL_HOME}` or `%TUTORIAL_HOME%` in the following steps according to the user environment:
 
 ```sh
 # For Linux or MacOS
@@ -41,6 +41,16 @@ cd 1c-mft-hybrid-example\.sbx\1c-mft-example
 For simplicity, from now on the code snippets are provided for MacOS, Linux or Powershell, as the syntax is almost the same. The user is expected to correct the small inaccuracies according to the shell used.
 
 Now copy EXAMPLE.env into .env and change the values in .env according to your needs. Mind that the user and group ids should be the same as the user executing the docker commands.
+
+> **Note for Rootless Docker on Linux:**
+> When running with rootless Docker on Linux, the container non-root user needs additional group permissions to access bind mounts properly. Ensure you set `CONSIDER_ADDITIONAL_GROUP=true` and `ADDITIONAL_GROUP_ID=0` (root group) in your `.env` file, and grant write permissions for the group on the host folder if necessary.
+> This will ensure the inner user may read and write existing files, but the newly created ones will have ownership of the user in the translated namespace. If needed, reset ownership of those files. You must be root inside the container to do this:
+>
+> ```sh
+> docker exec -it -u root 1c-mft-example sh
+> ```
+>
+> then `cd ...` and `chown root:root ...`
 
 Run the following commands:
 
