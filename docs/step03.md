@@ -139,6 +139,8 @@ You can observe the file was renamed.
 
 This concludes the tutorial's third step.
 
+**Side note**: At the moment of this tutorial writing, the server variable {md5} actually contains a sha256 checksum. This is visible in the renamed filename. If you think this error should be corrected, please vote the IBM Idea [WEBMMFTS-I-51](https://ideas.ibm.com/ideas/WEBMMFTS-I-51).
+
 ---
 
 ← Previous: [`step02`](step02.md) | [Back to README](../README.md)
